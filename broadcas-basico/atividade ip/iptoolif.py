@@ -1,12 +1,12 @@
 class IPAddress:
     def __init__(self, address):
         if isinstance(address, str):
-            if '.' in address:  # IPv4 format (AAA.BBB.CCC.DDD)
+            if '.' in address: 
                 parts = list(map(int, address.split('.')))
                 if len(parts) != 4 or any(part < 0 or part > 255 for part in parts):
                     raise ValueError("Invalid IP address format")
                 self.address = parts
-            else:  # Assume it's a bit string
+            else:  
                 if len(address) != 32 or any(c not in ('0', '1') for c in address):
                     raise ValueError("Invalid bit string format")
                 self.address = [
@@ -28,7 +28,6 @@ class IPAddress:
     
     def isMask(self):
         bit_str = self.toBits()
-        # Check if it's a valid mask (all 1s followed by all 0s)
         found_zero = False
         for bit in bit_str:
             if found_zero and bit == '1':
@@ -72,7 +71,6 @@ class IPToolIF:
     @staticmethod
     def isValid(ip):
         try:
-            # The IPAddress constructor will validate
             IPAddress(ip.toIPv4() if isinstance(ip, IPAddress) else ip)
             return True
         except ValueError:
@@ -119,22 +117,23 @@ class IPToolIF:
         return ip & mask
     
 
-# Creating IPAddress objects
-ip1 = IPAddress("192.168.1.1")
-ip2 = IPAddress("192.168.1.2")
-mask = IPAddress("255.255.255.0")
+ip1 = IPAddress("26.225.184.146")
+ip2 = IPAddress("26.220.183.158")
+mask = IPAddress("255.0.0.0")
 
-# Using IPToolIF methods
-print(IPToolIF.isValid(ip1))  # True
-print(IPToolIF.isValid("256.1.1.1"))  # False
+print("O ip é valido: ")
+print(IPToolIF.isValid(ip1))  
 
-print(IPToolIF.areSameNet(ip1, ip2, mask))  # True
-print(IPToolIF.areSameNet("192.168.1.1", "192.168.2.1", "255.255.255.0"))  # False
+print("estao na mesma rede: ")
+print(IPToolIF.areSameNet(ip1, ip2, mask))  
 
-print(IPToolIF.broadcast(ip1, mask).toIPv4())  # "192.168.1.255"
-print(IPToolIF.network(ip1, mask).toIPv4())  # "192.168.1.0"
+print("Broadcast: ")
+print(IPToolIF.broadcast(ip1, mask).toIPv4())  
 
-# IPAddress methods
-print(ip1.toBits())  # "11000000101010000000000100000001"
-print(mask.maskBits())  # 24
-print(mask.isMask())  # True
+print("Network: ")
+print(IPToolIF.network(ip1, mask).toIPv4())  
+
+
+print(ip1.toBits())  
+print(mask.maskBits())  
+print(mask.isMask())  
